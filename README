@@ -1,0 +1,6 @@
+Experian
+========
+
+Talks to Experian to verify a user's identity, based on their SSN, name, address, phone, etc.
+
+Copyright (c) 2009 Julio Santos, released under the MIT license
