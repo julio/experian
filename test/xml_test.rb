@@ -1,26 +1,23 @@
-require File.dirname(__FILE__) + '/../../test_helper'
+require 'test/unit'
+require 'codes'
+require 'xml'
 
-require 'experian/xml'
-
-class Experian::XmlTest < Test::Unit::TestCase
-
-  include Experian::Codes
-  
+class XmlTest < Test::Unit::TestCase
   def test_should_convert_full_xml_to_responses
-    xml_converter = Experian::Xml.new(xml_response)
+    xml_converter = Xml.new(xml_response)
     responses = xml_converter.to_responses
 
     assert_equal 7, responses.size
-    assert_equal "***ADDRESS***", responses[ADDRESS]
-    assert_equal "***ADDRESS_TYPE***", responses[ADDRESS_TYPE]
-    assert_equal "***PHONE***", responses[PHONE]
-    assert_equal "***SSN***", responses[SSN]
-    assert_equal "***DOB***", responses[DOB]
-    assert_equal "***OFAC***", responses[OFAC]
+    assert_equal "***ADDRESS***",      responses[Codes::ADDRESS]
+    assert_equal "***ADDRESS_TYPE***", responses[Codes::ADDRESS_TYPE]
+    assert_equal "***PHONE***",        responses[Codes::PHONE]
+    assert_equal "***SSN***",          responses[Codes::SSN]
+    assert_equal "***DOB***",          responses[Codes::DOB]
+    assert_equal "***OFAC***",         responses[Codes::OFAC]
   end
 
   def test_should_fail_gracefully_with_empty_xml_response
-    xml = Experian::Xml.new("")
+    xml = Xml.new("")
     doc = REXML::Document.new
     assert_equal '', xml.get_response_code(doc, 'UNDEFINED')
   end
@@ -200,5 +197,4 @@ class Experian::XmlTest < Test::Unit::TestCase
 
      EXPERIAN_RESPONSE
   end
-  
 end

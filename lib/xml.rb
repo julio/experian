@@ -1,33 +1,29 @@
-class Experian::Xml
+require 'rexml/document'
 
-  include Experian::Codes
-  
+class Xml
   def initialize(xml_string)
     @xml_string = xml_string
   end
 
   def to_document
-    REXML::Document.new(@xml_string)
+    @document ||= REXML::Document.new(@xml_string)
   end
   
   def to_responses
-    document = to_document
-
     {
-      ADDRESS      => get_response_code(document, 'GeneralResults/AddressVerificationResult'),
-      ADDRESS_TYPE => get_response_code(document, 'GeneralResults/AddressTypeResult'),
-      PHONE        => get_response_code(document, 'GeneralResults/PhoneVerificationResult'),
-      SSN          => get_response_code(document, 'GeneralResults/SSNResult'),
-      DOB          => get_response_code(document, 'GeneralResults/DateOfBirthMatch'),
-      OFAC         => get_response_code(document, 'GeneralResults/OFACResult'),
-      SCORE        => get_response_code(document, 'PreciseIDScore'),
+      Codes::ADDRESS      => get_response_code(to_document, 'GeneralResults/AddressVerificationResult'),
+      Codes::ADDRESS_TYPE => get_response_code(to_document, 'GeneralResults/AddressTypeResult'),
+      Codes::PHONE        => get_response_code(to_document, 'GeneralResults/PhoneVerificationResult'),
+      Codes::SSN          => get_response_code(to_document, 'GeneralResults/SSNResult'),
+      Codes::DOB          => get_response_code(to_document, 'GeneralResults/DateOfBirthMatch'),
+      Codes::OFAC         => get_response_code(to_document, 'GeneralResults/OFACResult'),
+      Codes::SCORE        => get_response_code(to_document, 'PreciseIDScore'),
     }
   end
 
   def get_response_code(document, element_name)
     elements = REXML::XPath.match(document, "//#{element_name}")
     
-    p "****** Found #{elements.length} node(s) for //#{element_name} ******" if elements.length > 1
     element = elements[0]
     
     result = ''
