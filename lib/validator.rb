@@ -1,6 +1,9 @@
-class Experian::Validator
-  include Experian::Codes
-
+# The response we get from Experian will be parsed and a score
+# will be calculated. Given that Experian doesn't give a yes/no 
+# answer, it's better to calculate this score based on your
+# business rules. In this particular implementation, the (hardcoded)
+# rules say that a a score of 2 or less isn't so good.
+class Validator
   def initialize(responses)
     @responses = responses
   end
@@ -18,14 +21,14 @@ class Experian::Validator
   end
   
   def minimum_good_match_score
-    EXPERIAN[:minimum_score]
+    Codes::MINIMUM_GOOD_SCORE
   end
   
   def score_for(key)
-    return ssn_score     if key == SSN
-    return address_score if key == ADDRESS
-    return phone_score   if key == PHONE
-    return dob_score     if key == DOB
+    return ssn_score     if key == Codes::SSN
+    return address_score if key == Codes::ADDRESS
+    return phone_score   if key == Codes::PHONE
+    return dob_score     if key == Codes::DOB
     key
   end
   
@@ -34,24 +37,24 @@ class Experian::Validator
   end
   
   def precise_id_score
-    @responses[SCORE].to_i
+    @responses[Codes::SCORE].to_i
   end
   
   def on_ofac?
-    !EXPERIAN[:valid_ofac_codes].include?(@responses[OFAC].to_i)
+    !Codes::VALID_OFAC_CODES.include?(@responses[Codes::OFAC].to_i)
   end
   
   def fraud_code_match?
-    return true if @responses[SSN].blank?
-    ['D', 'DS', 'DN', 'DY', 'NI'].include?(@responses[SSN])
+    return true if @responses[Codes::SSN].blank?
+    ['D', 'DS', 'DN', 'DY', 'NI'].include?(@responses[Codes::SSN])
   end
 
   def ssn_score
-    return 0 if @responses[SSN].blank?
+    return 0 if @responses[Codes::SSN].blank?
     
-    if %w{A FF S Y}.include?(@responses[SSN])
+    if %w{A FF S Y}.include?(@responses[Codes::SSN])
       1
-    elsif %w{FY SA YA YB}.include?(@responses[SSN])
+    elsif %w{FY SA YA YB}.include?(@responses[Codes::SSN])
       2
     else
       0
@@ -59,11 +62,11 @@ class Experian::Validator
   end
   
   def phone_score
-    return 0 if @responses[PHONE].blank?
+    return 0 if @responses[Codes::PHONE].blank?
     
-    if %{A AB AM C F FB FM S SB SM}.include?(@responses[PHONE])
+    if %{A AB AM C F FB FM S SB SM}.include?(@responses[Codes::PHONE])
       1
-    elsif %{H HB HM Y YB YM}.include?(@responses[PHONE])
+    elsif %{H HB HM Y YB YM}.include?(@responses[Codes::PHONE])
       2
     else
       0
@@ -71,15 +74,15 @@ class Experian::Validator
   end
 
   def address_score
-    return 0 if @responses[ADDRESS].blank?
+    return 0 if @responses[Codes::ADDRESS].blank?
     
-    %{S SM Y YB YM}.include?(@responses[ADDRESS]) ? 1 : 0
+    %{S SM Y YB YM}.include?(@responses[Codes::ADDRESS]) ? 1 : 0
   end
 
   def dob_score
-    return 0 if @responses[DOB].blank?
+    return 0 if @responses[Codes::DOB].blank?
     
-    @responses[DOB] == '1' ? 1 : 0
+    @responses[Codes::DOB] == '1' ? 1 : 0
   end
 end
 

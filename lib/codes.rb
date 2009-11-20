@@ -1,4 +1,4 @@
-module Experian::Codes
+module Codes
   ADDRESS                       = 'Address'
   ADDRESS_TYPE                  = 'Address Type'
   PHONE                         = 'Phone'
@@ -12,6 +12,7 @@ module Experian::Codes
   EXPERIAN_FRAUD                = 1
 
   MINIMUM_GOOD_SCORE            = 2
+  VALID_OFAC_CODES              = [1,12,13,14]
   
   # Version 1 - Users need to have address match + 3 other matches
   # Version 2 - Users need 2 matches
