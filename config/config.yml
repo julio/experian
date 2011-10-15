@@ -1,0 +1,19 @@
+# experian tech support: 800 854 7201
+# to change test password: https://stg1-ss1.experian.com/ssp/jsp/updateprofile.jsp
+development: &defaults
+  experian:
+    host: stg1.experian.com
+    path: /lookupServlet1?lookupServiceName=AccessPoint&lookupServiceVersion=1.0&serviceName=NetConnectDemo&serviceVersion=2.0&responseType=text/plain
+    username: microplace
+    password: microplacedev10
+    eai: SQN9O42F
+    preamble: TBD1
+    subcode: 1004511
+    vendor_number: F42
+    db_host: PRECISE_ID_TEST
+  
+test:
+  <<: *defaults
+
+production:
+  <<: *defaults
